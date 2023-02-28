@@ -67,7 +67,7 @@ void preprocess(cv::Mat &input_image, const std::vector<float> &input_mean,
   cv::Mat resize_image;
   cv::resize(input_image, resize_image, cv::Size(input_width, input_height), 0, 0);
   if (resize_image.channels() == 4) {
-    cv::cvtColor(resize_image, resize_image, CV_BGRA2RGB);
+    cv::cvtColor(resize_image, resize_image, cv::COLOR_BGR2RGB);
   }
   cv::Mat norm_image;
   resize_image.convertTo(norm_image, CV_32FC3, 1 / 255.f);
@@ -256,8 +256,8 @@ int main(int argc, char **argv) {
     cv::waitKey(0);
   } else {
     cv::VideoCapture cap(-1);
-    cap.set(CV_CAP_PROP_FRAME_WIDTH, 640);
-    cap.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
+    cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);
+    cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
     if (!cap.isOpened()) {
       return -1;
     }
