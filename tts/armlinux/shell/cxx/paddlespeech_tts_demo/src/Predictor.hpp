@@ -171,7 +171,7 @@ public:
         uint32_t fmt_size = 16;
         uint16_t audio_format = 3;
         uint16_t num_channels = 1;
-        uint32_t sample_rate = 16000;
+        uint32_t sample_rate = 24000;
         uint32_t byte_rate = 64000;
         uint16_t block_align = 4;
         uint16_t bits_per_sample = 32;
