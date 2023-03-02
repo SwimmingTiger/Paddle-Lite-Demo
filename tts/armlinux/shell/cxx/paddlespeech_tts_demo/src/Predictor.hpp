@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <chrono>
 #include <iostream>
+#include <fstream>
 #include <memory>
 #include <string>
 #include <vector>
@@ -157,5 +158,47 @@ public:
 
     void releaseWav() {
         wav.clear();
+    }
+
+    struct WavHeader {
+        // RIFF 头
+        char riff[4] = {'R', 'I', 'F', 'F'};
+        uint32_t size = 0;
+        char wave[4] = {'W', 'A', 'V', 'E'};
+
+        // FMT 头
+        char fmt[4] = {'f', 'm', 't', ' '};
+        uint32_t fmt_size = 16;
+        uint16_t audio_format = 3;
+        uint16_t num_channels = 1;
+        uint32_t sample_rate = 16000;
+        uint32_t byte_rate = 64000;
+        uint16_t block_align = 4;
+        uint16_t bits_per_sample = 32;
+
+        // DATA 头
+        char data[4] = {'d', 'a', 't', 'a'};
+        uint32_t data_size = 0;
+    };
+
+    bool writeWavToFile(const std::string &wavPath) {
+        std::ofstream fout(wavPath, std::ios::binary);
+        if (!fout.is_open()) {
+            return false;
+        }
+
+        // 写入头信息
+        WavHeader header;
+        header.size = sizeof(header) - 8;
+        header.data_size = wav.size() * sizeof(float);
+        header.byte_rate = header.sample_rate * header.num_channels * header.bits_per_sample / 8;
+        header.block_align = header.num_channels * header.bits_per_sample / 8;
+        fout.write(reinterpret_cast<const char*>(&header), sizeof(header));
+
+        // 写入wav数据
+        fout.write(reinterpret_cast<const char*>(wav.data()), header.data_size);
+
+        fout.close();
+        return true;
     }
 };

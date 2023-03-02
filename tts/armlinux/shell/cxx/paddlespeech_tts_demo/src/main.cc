@@ -31,17 +31,18 @@ std::vector<std::vector<int64_t>> sentencesToChoose = {
 
 void usage(const char *binName) {
     std::cerr << "Usage:" << std::endl
-        << "\t" << binName << " <AM-model-path> <VOC-model-path> <sentences-index:1-10>" << std::endl;
+        << "\t" << binName << " <AM-model-path> <VOC-model-path> <sentences-index:1-10> <output-wav-path>" << std::endl;
 }
 
 int main(int argc, char *argv[]) {
-    if (argc < 4) {
+    if (argc < 5) {
         usage(argv[0]);
         return -1;
     }
     const char *AMModelPath = argv[1];
     const char *VOCModelPath = argv[2];
     int sentencesIndex = atoi(argv[3]) - 1;
+    const char *outputWavPath = argv[4];
 
     if (sentencesIndex < 0 || sentencesIndex >= sentencesToChoose.size()) {
         std::cerr << "sentences-index out of range" << std::endl;
@@ -60,6 +61,11 @@ int main(int argc, char *argv[]) {
     }
 
     std::cout << "Inference time: " << predictor.getInferenceTime() << "ms, WAV size: " << predictor.getWav().size() << std::endl;
+
+    if (!predictor.writeWavToFile(outputWavPath)) {
+        std::cerr << "write wav file failed" << std::endl;
+        return -1;
+    }
 
     return 0;
 }
